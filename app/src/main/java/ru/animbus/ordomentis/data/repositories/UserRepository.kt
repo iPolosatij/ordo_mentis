@@ -40,10 +40,7 @@ class UserRepository(
     }
 
     suspend fun getUsersByIds(userIds: List<String>): List<UserData> {
-        val allUsers = userDao.getAllUsers().first()
-        return mapper.toDomainList(allUsers).filter { user ->
-            userIds.contains(user.userId)
-        }
+        return mapper.toDomainList(userDao.getUsersByIds(userIds))
     }
 
     suspend fun clearAllUsers() {
@@ -55,7 +52,12 @@ class UserRepository(
         return mapper.toDomainList(allUsers).filter { user ->
             user.nikName.contains(query, ignoreCase = true) ||
                     user.name?.contains(query, ignoreCase = true) == true ||
-                    user.lastName?.contains(query, ignoreCase = true) == true
+                    user.lastName?.contains(query, ignoreCase = true) == true ||
+                    user.userContacts.any { contact ->
+                        contact.contact.contains(query, ignoreCase = true) ||
+                                contact.name.contains(query, ignoreCase = true)
+                    } ||
+                    user.specialties.any { it.contains(query, ignoreCase = true) }
         }
     }
 
@@ -64,6 +66,91 @@ class UserRepository(
         return mapper.toDomainList(allUsers).filter { user ->
             user.units?.contains(unitId) == true
         }
+    }
+
+    suspend fun getUsersBySpecialty(specialty: String): List<UserData> {
+        val allUsers = userDao.getAllUsers().first()
+        return mapper.toDomainList(allUsers).filter { user ->
+            user.specialties.any { it.contains(specialty, ignoreCase = true) }
+        }
+    }
+
+    suspend fun getUsersWithPendingInvites(): List<UserData> {
+        val allUsers = userDao.getAllUsers().first()
+        return mapper.toDomainList(allUsers).filter { user ->
+            user.invites.isNotEmpty()
+        }
+    }
+
+    suspend fun getUserContacts(userId: String): List<UserData> {
+        val user = getUserById(userId) ?: return emptyList()
+        return getUsersByIds(user.contactList)
+    }
+
+    suspend fun addContactToUser(userId: String, contactUserId: String): Boolean {
+        val user = getUserById(userId) ?: return false
+        val updatedContactList = user.contactList.toMutableList().apply {
+            if (!contains(contactUserId)) {
+                add(contactUserId)
+            }
+        }
+        val updatedUser = user.copy(contactList = updatedContactList)
+        updateUser(updatedUser)
+        return true
+    }
+
+    suspend fun removeContactFromUser(userId: String, contactUserId: String): Boolean {
+        val user = getUserById(userId) ?: return false
+        val updatedContactList = user.contactList.toMutableList().apply {
+            remove(contactUserId)
+        }
+        val updatedUser = user.copy(contactList = updatedContactList)
+        updateUser(updatedUser)
+        return true
+    }
+
+    suspend fun addInviteToUser(userId: String, unitId: String): Boolean {
+        val user = getUserById(userId) ?: return false
+        val updatedInvites = user.invites.toMutableList().apply {
+            if (!contains(unitId)) {
+                add(unitId)
+            }
+        }
+        val updatedUser = user.copy(invites = updatedInvites)
+        updateUser(updatedUser)
+        return true
+    }
+
+    suspend fun removeInviteFromUser(userId: String, unitId: String): Boolean {
+        val user = getUserById(userId) ?: return false
+        val updatedInvites = user.invites.toMutableList().apply {
+            remove(unitId)
+        }
+        val updatedUser = user.copy(invites = updatedInvites)
+        updateUser(updatedUser)
+        return true
+    }
+
+    suspend fun addSpecialtyToUser(userId: String, specialty: String): Boolean {
+        val user = getUserById(userId) ?: return false
+        val updatedSpecialties = user.specialties.toMutableList().apply {
+            if (!contains(specialty)) {
+                add(specialty)
+            }
+        }
+        val updatedUser = user.copy(specialties = updatedSpecialties)
+        updateUser(updatedUser)
+        return true
+    }
+
+    suspend fun removeSpecialtyFromUser(userId: String, specialty: String): Boolean {
+        val user = getUserById(userId) ?: return false
+        val updatedSpecialties = user.specialties.toMutableList().apply {
+            remove(specialty)
+        }
+        val updatedUser = user.copy(specialties = updatedSpecialties)
+        updateUser(updatedUser)
+        return true
     }
 
     suspend fun validateUserCredentials(nikName: String, passwordHash: String? = null): UserData? {

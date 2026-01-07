@@ -29,8 +29,21 @@ data class UserData(
     val lastName: String?,
     val patronymic: String?,
     val nikName: String,
+    val bornDate: Long,
+    val userContacts: List<ContactsData> = listOf(),//лист контактов самого юзера которые он должен добавить сам
+    val contactList: List<String> = listOf(),//лист идентификаторов UserData добавленных в контакты
+    val specialties: List<String> = listOf(),//лист названий специальностей указанных самим пользователем
+    val invites: List<String> = listOf(), //лист идентификаторов UnitData который добавляется сюда во время приглашения
     val accessItem: List<String> = listOf() //лист идентификаторов MainItemData
 )
+
+data class ContactsData(
+    val name: String,
+    val type: ContactDataType,
+    val contact: String,
+)
+
+enum class ContactDataType{Telephone, Email, Telegram, GitHub}
 
 //может быть задача, цель, идея и т.д.
 data class MainItemData(
