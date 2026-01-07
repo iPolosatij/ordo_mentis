@@ -2,7 +2,14 @@ package ru.animbus.ordomentis.data.database.mappers
 
 import com.google.gson.Gson
 import ru.animbus.ordomentis.data.database.entities.MainItemEntity
-import ru.animbus.ordomentis.data.models.domain.*
+import ru.animbus.ordomentis.domain.models.ItemComment
+import ru.animbus.ordomentis.domain.models.ItemStatus
+import ru.animbus.ordomentis.domain.models.ItemType
+import ru.animbus.ordomentis.domain.models.ItemUser
+import ru.animbus.ordomentis.domain.models.MainItemData
+import ru.animbus.ordomentis.domain.models.Money
+import ru.animbus.ordomentis.domain.models.SharedUser
+import ru.animbus.ordomentis.domain.models.WorkingHours
 
 class MainItemMapper {
     private val gson = Gson()
@@ -50,7 +57,8 @@ class MainItemMapper {
             users = gson.fromJson(entity.users, Array<ItemUser>::class.java).toList(),
             createDate = entity.createDate,
             deadline = entity.deadline,
-            timeEstimation = gson.fromJson(entity.timeEstimation, Array<WorkingHours>::class.java).toList(),
+            timeEstimation = gson.fromJson(entity.timeEstimation, Array<WorkingHours>::class.java)
+                .toList(),
             spentTime = gson.fromJson(entity.spentTime, Array<WorkingHours>::class.java).toList(),
             costEstimation = entity.costEstimation?.let { gson.fromJson(it, Money::class.java) },
             realCost = entity.realCost?.let { gson.fromJson(it, Money::class.java) },

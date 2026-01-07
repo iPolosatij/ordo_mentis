@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import ru.animbus.ordomentis.data.database.dao.UnitDao
 import ru.animbus.ordomentis.data.database.mappers.UnitMapper
-import ru.animbus.ordomentis.data.models.domain.UnitData
+import ru.animbus.ordomentis.domain.models.UnitData
 
 class UnitRepository(
     private val unitDao: UnitDao,

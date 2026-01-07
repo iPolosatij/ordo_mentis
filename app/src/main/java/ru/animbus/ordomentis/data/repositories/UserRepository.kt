@@ -5,7 +5,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import ru.animbus.ordomentis.data.database.dao.UserDao
 import ru.animbus.ordomentis.data.database.mappers.UserMapper
-import ru.animbus.ordomentis.data.models.domain.UserData
+import ru.animbus.ordomentis.domain.models.UserData
 
 class UserRepository(
     private val userDao: UserDao,

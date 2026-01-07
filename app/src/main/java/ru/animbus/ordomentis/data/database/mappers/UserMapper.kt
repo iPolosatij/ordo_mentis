@@ -2,7 +2,7 @@ package ru.animbus.ordomentis.data.database.mappers
 
 import com.google.gson.Gson
 import ru.animbus.ordomentis.data.database.entities.UserEntity
-import ru.animbus.ordomentis.data.models.domain.UserData
+import ru.animbus.ordomentis.domain.models.UserData
 
 @Suppress("UNCHECKED_CAST")
 class UserMapper {

@@ -3,7 +3,11 @@ package ru.animbus.ordomentis.data.database.converters
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import ru.animbus.ordomentis.data.models.domain.*
+import ru.animbus.ordomentis.domain.models.ItemStatus
+import ru.animbus.ordomentis.domain.models.ItemType
+import ru.animbus.ordomentis.domain.models.MoneyType
+import ru.animbus.ordomentis.domain.models.UnitType
+import ru.animbus.ordomentis.domain.models.UserRole
 
 class Converters {
     private val gson = Gson()

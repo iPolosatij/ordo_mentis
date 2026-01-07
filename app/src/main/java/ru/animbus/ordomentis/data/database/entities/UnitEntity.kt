@@ -2,7 +2,6 @@ package ru.animbus.ordomentis.data.database.entities
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ru.animbus.ordomentis.data.models.domain.UnitType
 
 @Entity(tableName = "units")
 data class UnitEntity(

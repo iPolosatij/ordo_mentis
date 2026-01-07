@@ -2,8 +2,8 @@ package ru.animbus.ordomentis.data.database.mappers
 
 import com.google.gson.Gson
 import ru.animbus.ordomentis.data.database.entities.UnitEntity
-import ru.animbus.ordomentis.data.models.domain.UnitData
-import ru.animbus.ordomentis.data.models.domain.UnitType
+import ru.animbus.ordomentis.domain.models.UnitData
+import ru.animbus.ordomentis.domain.models.UnitType
 
 @Suppress("UNCHECKED_CAST")
 class UnitMapper {

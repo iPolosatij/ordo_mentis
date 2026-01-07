@@ -5,9 +5,9 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import ru.animbus.ordomentis.data.database.dao.MainItemDao
 import ru.animbus.ordomentis.data.database.mappers.MainItemMapper
-import ru.animbus.ordomentis.data.models.domain.ItemStatus
-import ru.animbus.ordomentis.data.models.domain.ItemType
-import ru.animbus.ordomentis.data.models.domain.MainItemData
+import ru.animbus.ordomentis.domain.models.ItemStatus
+import ru.animbus.ordomentis.domain.models.ItemType
+import ru.animbus.ordomentis.domain.models.MainItemData
 
 class MainItemRepository(
     private val mainItemDao: MainItemDao,

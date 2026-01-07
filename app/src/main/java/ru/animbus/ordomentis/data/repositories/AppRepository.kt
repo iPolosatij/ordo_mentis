@@ -1,9 +1,9 @@
 package ru.animbus.ordomentis.data.repositories
 
 import kotlinx.coroutines.flow.Flow
-import ru.animbus.ordomentis.data.models.domain.MainItemData
-import ru.animbus.ordomentis.data.models.domain.UnitData
-import ru.animbus.ordomentis.data.models.domain.UserData
+import ru.animbus.ordomentis.domain.models.MainItemData
+import ru.animbus.ordomentis.domain.models.UnitData
+import ru.animbus.ordomentis.domain.models.UserData
 
 class AppRepository(
     private val unitRepository: UnitRepository,

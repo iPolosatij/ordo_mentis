@@ -1,4 +1,4 @@
-package ru.animbus.ordomentis.data.models.domain
+package ru.animbus.ordomentis.domain.models
 
 import java.util.UUID
 
