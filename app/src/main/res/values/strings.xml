@@ -1,3 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">Ordo Mentis</string>
+<string name="app_name">OrdoMentis</string>
+<string name="tasks">Задачи</string>
+<string name="units">Группы</string>
+<string name="users">Пользователи</string>
+<string name="profile">Профиль</string>
+<string name="login">Войти</string>
+<string name="register">Зарегистрироваться</string>
+<string name="logout">Выйти</string>
 </resources>

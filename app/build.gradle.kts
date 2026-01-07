@@ -66,9 +66,12 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
 
-    // Koin
+    // Koin - ViewModel уже включен в koin-androidx-compose
     implementation(libs.koin.android)
     implementation(libs.koin.androidx.compose)
+
+    // Navigation Compose
+    implementation(libs.androidx.navigation.compose)
 
     // Coroutines
     implementation(libs.kotlinx.coroutines.android)
@@ -78,6 +81,9 @@ dependencies {
 
     // Coil
     implementation(libs.coil.compose)
+
+    // ViewModel
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
 
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
