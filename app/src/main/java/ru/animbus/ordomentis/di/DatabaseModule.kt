@@ -1,6 +1,5 @@
 package ru.animbus.ordomentis.di
 
-import android.content.Context
 import androidx.room.Room
 import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
@@ -8,7 +7,10 @@ import ru.animbus.ordomentis.data.database.AppDatabase
 import ru.animbus.ordomentis.data.database.mappers.MainItemMapper
 import ru.animbus.ordomentis.data.database.mappers.UnitMapper
 import ru.animbus.ordomentis.data.database.mappers.UserMapper
-import ru.animbus.ordomentis.data.repositories.*
+import ru.animbus.ordomentis.data.repositories.AppRepository
+import ru.animbus.ordomentis.data.repositories.MainItemRepository
+import ru.animbus.ordomentis.data.repositories.UnitRepository
+import ru.animbus.ordomentis.data.repositories.UserRepository
 
 val databaseModule = module {
     single {
@@ -36,5 +38,5 @@ val databaseModule = module {
     single { MainItemRepository(get(), get()) }
 
     // Main repository
-    single { AppRepository(get(), get(), get()) }
+    single { AppRepository(get(), get(), get(), get(), get(), get()) }
 }

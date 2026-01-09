@@ -5,6 +5,7 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.core.context.startKoin
 import ru.animbus.ordomentis.di.databaseModule
 import ru.animbus.ordomentis.di.uiModule
+import ru.animbus.ordomentis.di.webApiModule
 
 class OrdoMentisApp : Application() {
     override fun onCreate() {
@@ -12,7 +13,7 @@ class OrdoMentisApp : Application() {
 
         startKoin {
             androidContext(this@OrdoMentisApp)
-            modules(databaseModule, uiModule)
+            modules(databaseModule, uiModule, webApiModule)
         }
     }
 }

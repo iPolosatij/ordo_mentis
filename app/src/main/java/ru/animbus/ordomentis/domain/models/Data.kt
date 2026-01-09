@@ -37,6 +37,7 @@ data class UserData(
     val accessItem: List<String> = listOf() //лист идентификаторов MainItemData
 )
 
+// данные контактной информации (название способа связи , тип и сам идентификатор контакта в данном типе связи
 data class ContactsData(
     val name: String,
     val type: ContactDataType,
@@ -111,3 +112,14 @@ data class Money(
     val type: MoneyType,
 )
 enum class MoneyType(type: String){ Rub("RUB"), Usd("USD"), Cny("CNY"), Gbp("GBP")}
+
+data class SyncData(
+    val users: List<SyncAtom>,
+    val items: List<SyncAtom>,
+    val units: List<SyncAtom>,
+)
+
+data class SyncAtom(
+    val id: String,
+    val time: Long,
+)

@@ -2,6 +2,11 @@ package ru.animbus.ordomentis.data.repositories
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
+import ru.animbus.ordomentis.data.repositories.api.ItemApiRepository
+import ru.animbus.ordomentis.data.repositories.api.UnitApiRepository
+import ru.animbus.ordomentis.data.repositories.api.UserApiRepository
+import ru.animbus.ordomentis.data.webapi.models.ApiResponse
+import ru.animbus.ordomentis.data.webapi.models.SyncDataResponse
 import ru.animbus.ordomentis.domain.models.MainItemData
 import ru.animbus.ordomentis.domain.models.UnitData
 import ru.animbus.ordomentis.domain.models.UserData
@@ -9,7 +14,10 @@ import ru.animbus.ordomentis.domain.models.UserData
 class AppRepository(
     private val unitRepository: UnitRepository,
     private val userRepository: UserRepository,
-    private val mainItemRepository: MainItemRepository
+    private val mainItemRepository: MainItemRepository,
+    private val userApiRepository: UserApiRepository,
+    private val unitApiRepository: UnitApiRepository,
+    private val itemApiRepository: ItemApiRepository
 ) {
     // Unit делегаты
     suspend fun insertUnit(unit: UnitData) = unitRepository.insertUnit(unit)
@@ -209,6 +217,103 @@ class AppRepository(
                     user.nikName.contains(contactInfo, ignoreCase = true) ||
                     user.name?.contains(contactInfo, ignoreCase = true) == true ||
                     user.lastName?.contains(contactInfo, ignoreCase = true) == true
+        }
+    }
+
+    // API методы для пользователей
+    suspend fun getSyncDataFromApi(userId: String, lastSyncTime: Long = 0): ApiResponse<SyncDataResponse> {
+        return userApiRepository.getSyncData(userId, lastSyncTime)
+    }
+
+    suspend fun getAllUsersFromApi(): ApiResponse<List<UserData>> {
+        return userApiRepository.getAllUsers()
+    }
+
+    suspend fun getUserByIdFromApi(id: String): ApiResponse<UserData> {
+        return userApiRepository.getUserById(id)
+    }
+
+    suspend fun getUsersByUnitIdFromApi(unitId: String): ApiResponse<List<UserData>> {
+        return userApiRepository.getUsersByUnitId(unitId)
+    }
+
+    suspend fun syncUsersToApi(users: List<UserData>): ApiResponse<List<UserData>> {
+        return userApiRepository.syncUsers(users)
+    }
+
+    // API методы для юнитов
+    suspend fun getAllUnitsFromApi(): ApiResponse<List<UnitData>> {
+        return unitApiRepository.getAllUnits()
+    }
+
+    suspend fun getUnitByIdFromApi(id: String): ApiResponse<UnitData> {
+        return unitApiRepository.getUnitById(id)
+    }
+
+    suspend fun getUnitsByUserIdFromApi(userId: String): ApiResponse<List<UnitData>> {
+        return unitApiRepository.getUnitsByUserId(userId)
+    }
+
+    suspend fun syncUnitsToApi(units: List<UnitData>): ApiResponse<List<UnitData>> {
+        return unitApiRepository.syncUnits(units)
+    }
+
+    // API методы для задач
+    suspend fun getAllItemsFromApi(): ApiResponse<List<MainItemData>> {
+        return itemApiRepository.getAllItems()
+    }
+
+    suspend fun getItemByIdFromApi(id: String): ApiResponse<MainItemData> {
+        return itemApiRepository.getItemById(id)
+    }
+
+    suspend fun getItemsByUserIdFromApi(userId: String): ApiResponse<List<MainItemData>> {
+        return itemApiRepository.getItemsByUserId(userId)
+    }
+
+    suspend fun getItemsByUnitIdFromApi(unitId: String): ApiResponse<List<MainItemData>> {
+        return itemApiRepository.getItemsByUnitId(unitId)
+    }
+
+    suspend fun syncItemsToApi(items: List<MainItemData>): ApiResponse<List<MainItemData>> {
+        return itemApiRepository.syncItems(items)
+    }
+
+    // Комплексная синхронизация
+    suspend fun performFullSync(userId: String): Boolean {
+        return try {
+            // Получаем данные синхронизации
+            val syncResponse = getSyncDataFromApi(userId)
+            if (syncResponse is ApiResponse.Success) {
+                val syncData = syncResponse.data
+
+                // Синхронизируем пользователей
+                val usersResponse = getAllUsersFromApi()
+                if (usersResponse is ApiResponse.Success) {
+                    userRepository.clearAllUsers()
+                    userRepository.insertAllUsers(usersResponse.data)
+                }
+
+                // Синхронизируем юниты
+                val unitsResponse = getAllUnitsFromApi()
+                if (unitsResponse is ApiResponse.Success) {
+                    unitRepository.clearAllUnits()
+                    unitRepository.insertAllUnits(unitsResponse.data)
+                }
+
+                // Синхронизируем задачи
+                val itemsResponse = getAllItemsFromApi()
+                if (itemsResponse is ApiResponse.Success) {
+                    mainItemRepository.clearAllItems()
+                    mainItemRepository.insertAllItems(itemsResponse.data)
+                }
+
+                true
+            } else {
+                false
+            }
+        } catch (e: Exception) {
+            false
         }
     }
 }
