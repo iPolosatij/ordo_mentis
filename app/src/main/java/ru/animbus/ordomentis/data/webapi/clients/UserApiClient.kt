@@ -3,16 +3,15 @@ package ru.animbus.ordomentis.data.webapi.clients
 import retrofit2.Response
 import ru.animbus.ordomentis.data.webapi.interfaces.UserApi
 import ru.animbus.ordomentis.data.webapi.models.ApiResponse
-import ru.animbus.ordomentis.data.webapi.models.SyncDataResponse
-import ru.animbus.ordomentis.data.webapi.models.SyncRequest
+import ru.animbus.ordomentis.data.webapi.models.SyncData
 import ru.animbus.ordomentis.domain.models.UserData
 import java.io.IOException
 
 class UserApiClient(
     private val userApi: UserApi
 ) {
-    suspend fun getSyncData(request: SyncRequest): ApiResponse<SyncDataResponse> {
-        return safeApiCall { userApi.getSyncData(request) }
+    suspend fun getSyncData(userId: String): ApiResponse<SyncData> {
+        return safeApiCall { userApi.getSyncData(userId) }
     }
 
     suspend fun getAllUsers(): ApiResponse<List<UserData>> {

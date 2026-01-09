@@ -6,7 +6,8 @@ import ru.animbus.ordomentis.data.repositories.api.ItemApiRepository
 import ru.animbus.ordomentis.data.repositories.api.UnitApiRepository
 import ru.animbus.ordomentis.data.repositories.api.UserApiRepository
 import ru.animbus.ordomentis.data.webapi.models.ApiResponse
-import ru.animbus.ordomentis.data.webapi.models.SyncDataResponse
+import ru.animbus.ordomentis.data.webapi.models.SyncAtom
+import ru.animbus.ordomentis.data.webapi.models.SyncData
 import ru.animbus.ordomentis.domain.models.MainItemData
 import ru.animbus.ordomentis.domain.models.UnitData
 import ru.animbus.ordomentis.domain.models.UserData
@@ -17,7 +18,8 @@ class AppRepository(
     private val mainItemRepository: MainItemRepository,
     private val userApiRepository: UserApiRepository,
     private val unitApiRepository: UnitApiRepository,
-    private val itemApiRepository: ItemApiRepository
+    private val itemApiRepository: ItemApiRepository,
+    private val syncRepository: SyncRepository,
 ) {
     // Unit делегаты
     suspend fun insertUnit(unit: UnitData) = unitRepository.insertUnit(unit)
@@ -25,12 +27,20 @@ class AppRepository(
     suspend fun updateUnit(unit: UnitData) = unitRepository.updateUnit(unit)
     suspend fun deleteUnit(unit: UnitData) = unitRepository.deleteUnit(unit)
     suspend fun getUnitById(unitId: String): UnitData? = unitRepository.getUnitById(unitId)
-    suspend fun getUnitsByIds(unitIds: List<String>): List<UnitData> = unitRepository.getUnitsByIds(unitIds)
+    suspend fun getUnitsByIds(unitIds: List<String>): List<UnitData> =
+        unitRepository.getUnitsByIds(unitIds)
+
     fun getAllUnits(): Flow<List<UnitData>> = unitRepository.getAllUnits()
-    suspend fun getUnitsForOwner(ownerId: String): List<UnitData> = unitRepository.getUnitsForOwner(ownerId)
-    suspend fun getUnitsForUser(userId: String): List<UnitData> = unitRepository.getUnitsForUser(userId)
+    suspend fun getUnitsForOwner(ownerId: String): List<UnitData> =
+        unitRepository.getUnitsForOwner(ownerId)
+
+    suspend fun getUnitsForUser(userId: String): List<UnitData> =
+        unitRepository.getUnitsForUser(userId)
+
     suspend fun clearAllUnits() = unitRepository.clearAllUnits()
-    suspend fun searchUnitsByName(name: String?): List<UnitData> = unitRepository.searchUnitsByName(name)
+    suspend fun searchUnitsByName(name: String?): List<UnitData> =
+        unitRepository.searchUnitsByName(name)
+
     suspend fun getUnitsByType(type: String): List<UnitData> = unitRepository.getUnitsByType(type)
 
     // User делегаты (включая новые методы)
@@ -39,27 +49,45 @@ class AppRepository(
     suspend fun updateUser(user: UserData) = userRepository.updateUser(user)
     suspend fun deleteUser(user: UserData) = userRepository.deleteUser(user)
     suspend fun getUserById(userId: String): UserData? = userRepository.getUserById(userId)
-    suspend fun getUserByNikName(nikName: String): UserData? = userRepository.getUserByNikName(nikName)
+    suspend fun getUserByNikName(nikName: String): UserData? =
+        userRepository.getUserByNikName(nikName)
+
     fun getAllUsers(): Flow<List<UserData>> = userRepository.getAllUsers()
-    suspend fun getUsersByIds(userIds: List<String>): List<UserData> = userRepository.getUsersByIds(userIds)
+    suspend fun getUsersByIds(userIds: List<String>): List<UserData> =
+        userRepository.getUsersByIds(userIds)
+
     suspend fun clearAllUsers() = userRepository.clearAllUsers()
     suspend fun searchUsers(query: String): List<UserData> = userRepository.searchUsers(query)
-    suspend fun getUsersByUnitId(unitId: String): List<UserData> = userRepository.getUsersByUnitId(unitId)
-    suspend fun getUsersBySpecialty(specialty: String): List<UserData> = userRepository.getUsersBySpecialty(specialty)
-    suspend fun getUsersWithPendingInvites(): List<UserData> = userRepository.getUsersWithPendingInvites()
-    suspend fun getUserContacts(userId: String): List<UserData> = userRepository.getUserContacts(userId)
+    suspend fun getUsersByUnitId(unitId: String): List<UserData> =
+        userRepository.getUsersByUnitId(unitId)
+
+    suspend fun getUsersBySpecialty(specialty: String): List<UserData> =
+        userRepository.getUsersBySpecialty(specialty)
+
+    suspend fun getUsersWithPendingInvites(): List<UserData> =
+        userRepository.getUsersWithPendingInvites()
+
+    suspend fun getUserContacts(userId: String): List<UserData> =
+        userRepository.getUserContacts(userId)
+
     suspend fun addContactToUser(userId: String, contactUserId: String): Boolean =
         userRepository.addContactToUser(userId, contactUserId)
+
     suspend fun removeContactFromUser(userId: String, contactUserId: String): Boolean =
         userRepository.removeContactFromUser(userId, contactUserId)
+
     suspend fun addInviteToUser(userId: String, unitId: String): Boolean =
         userRepository.addInviteToUser(userId, unitId)
+
     suspend fun removeInviteFromUser(userId: String, unitId: String): Boolean =
         userRepository.removeInviteFromUser(userId, unitId)
+
     suspend fun addSpecialtyToUser(userId: String, specialty: String): Boolean =
         userRepository.addSpecialtyToUser(userId, specialty)
+
     suspend fun removeSpecialtyFromUser(userId: String, specialty: String): Boolean =
         userRepository.removeSpecialtyFromUser(userId, specialty)
+
     suspend fun validateUserCredentials(nikName: String, passwordHash: String? = null): UserData? =
         userRepository.validateUserCredentials(nikName, passwordHash)
 
@@ -70,22 +98,38 @@ class AppRepository(
     suspend fun deleteItem(item: MainItemData) = mainItemRepository.deleteItem(item)
     suspend fun getItemById(itemId: String): MainItemData? = mainItemRepository.getItemById(itemId)
     fun getAllItems(): Flow<List<MainItemData>> = mainItemRepository.getAllItems()
-    suspend fun getItemsByOwnerId(ownerId: String): List<MainItemData> = mainItemRepository.getItemsByOwnerId(ownerId)
-    suspend fun getItemsByIds(itemIds: List<String>): List<MainItemData> = mainItemRepository.getItemsByIds(itemIds)
-    suspend fun getItemsByUserId(userId: String): List<MainItemData> = mainItemRepository.getItemsByUserId(userId)
+    suspend fun getItemsByOwnerId(ownerId: String): List<MainItemData> =
+        mainItemRepository.getItemsByOwnerId(ownerId)
+
+    suspend fun getItemsByIds(itemIds: List<String>): List<MainItemData> =
+        mainItemRepository.getItemsByIds(itemIds)
+
+    suspend fun getItemsByUserId(userId: String): List<MainItemData> =
+        mainItemRepository.getItemsByUserId(userId)
+
     suspend fun clearAllItems() = mainItemRepository.clearAllItems()
-    suspend fun deleteItemsByOwnerId(ownerId: String) = mainItemRepository.deleteItemsByOwnerId(ownerId)
+    suspend fun deleteItemsByOwnerId(ownerId: String) =
+        mainItemRepository.deleteItemsByOwnerId(ownerId)
+
     suspend fun getItemsByStatus(status: ru.animbus.ordomentis.domain.models.ItemStatus): List<MainItemData> =
         mainItemRepository.getItemsByStatus(status)
+
     suspend fun getItemsByType(itemType: ru.animbus.ordomentis.domain.models.ItemType): List<MainItemData> =
         mainItemRepository.getItemsByType(itemType)
+
     suspend fun getItemsWithDeadlineApproaching(daysThreshold: Int = 7): List<MainItemData> =
         mainItemRepository.getItemsWithDeadlineApproaching(daysThreshold)
+
     suspend fun getRootItems(): List<MainItemData> = mainItemRepository.getRootItems()
-    suspend fun getSubItems(parentItemId: String): List<MainItemData> = mainItemRepository.getSubItems(parentItemId)
-    suspend fun searchItems(query: String): List<MainItemData> = mainItemRepository.searchItems(query)
+    suspend fun getSubItems(parentItemId: String): List<MainItemData> =
+        mainItemRepository.getSubItems(parentItemId)
+
+    suspend fun searchItems(query: String): List<MainItemData> =
+        mainItemRepository.searchItems(query)
+
     suspend fun getItemsByDateRange(startDate: String, endDate: String): List<MainItemData> =
         mainItemRepository.getItemsByDateRange(startDate, endDate)
+
     suspend fun getActiveItems(): List<MainItemData> = mainItemRepository.getActiveItems()
     suspend fun getCompletedItems(): List<MainItemData> = mainItemRepository.getCompletedItems()
 
@@ -195,7 +239,11 @@ class AppRepository(
         return true
     }
 
-    suspend fun syncDataFromServer(units: List<UnitData>, users: List<UserData>, items: List<MainItemData>) {
+    suspend fun syncDataFromServer(
+        units: List<UnitData>,
+        users: List<UserData>,
+        items: List<MainItemData>
+    ) {
         // Очищаем локальные данные
         clearAllUnits()
         clearAllUsers()
@@ -221,8 +269,12 @@ class AppRepository(
     }
 
     // API методы для пользователей
-    suspend fun getSyncDataFromApi(userId: String, lastSyncTime: Long = 0): ApiResponse<SyncDataResponse> {
+    suspend fun getSyncDataFromApi(userId: String, lastSyncTime: Long = 0): ApiResponse<SyncData> {
         return userApiRepository.getSyncData(userId, lastSyncTime)
+    }
+
+    suspend fun getLocalSyncData(): SyncData {
+        return syncRepository.getLocalSyncData()
     }
 
     suspend fun getAllUsersFromApi(): ApiResponse<List<UserData>> {
@@ -284,28 +336,96 @@ class AppRepository(
         return try {
             // Получаем данные синхронизации
             val syncResponse = getSyncDataFromApi(userId)
+            val localSync = getLocalSyncData()
             if (syncResponse is ApiResponse.Success) {
                 val syncData = syncResponse.data
 
                 // Синхронизируем пользователей
                 val usersResponse = getAllUsersFromApi()
                 if (usersResponse is ApiResponse.Success) {
-                    userRepository.clearAllUsers()
-                    userRepository.insertAllUsers(usersResponse.data)
+                    if (localSync.users.isEmpty()) {
+                        userRepository.clearAllUsers()
+                        userRepository.insertAllUsers(usersResponse.data)
+                    } else {
+                        val tempListIn = arrayListOf<UserData>()
+                        val tempListOut = arrayListOf<UserData>()
+                        val mapApiSyncUsersById: Map<String, SyncAtom> =
+                            syncData.users.associateBy { it.id }
+                        localSync.users.forEach { localAtom ->
+                            mapApiSyncUsersById[localAtom.id]?.let { apiAtom ->
+                                if (localAtom.time > apiAtom.time) {
+                                    userRepository.getUserById(localAtom.id)
+                                        ?.let { tempListOut.add(it) }
+                                } else {
+                                    getUserByIdFromApi(apiAtom.id).let {
+                                        if (it is ApiResponse.Success){
+                                            tempListIn.add(it.data)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        userApiRepository.syncUsers(tempListOut)
+                        userRepository.insertAllUsers(tempListIn)
+                    }
                 }
 
                 // Синхронизируем юниты
                 val unitsResponse = getAllUnitsFromApi()
                 if (unitsResponse is ApiResponse.Success) {
-                    unitRepository.clearAllUnits()
-                    unitRepository.insertAllUnits(unitsResponse.data)
+                    if (localSync.users.isEmpty()) {
+                        unitRepository.clearAllUnits()
+                        unitRepository.insertAllUnits(unitsResponse.data)
+                    } else {
+                        val tempListIn = arrayListOf<UnitData>()
+                        val tempListOut = arrayListOf<UnitData>()
+                        val mapApiSyncUnitsById: Map<String, SyncAtom> =
+                            syncData.units.associateBy { it.id }
+                        localSync.units.forEach { localAtom ->
+                            mapApiSyncUnitsById[localAtom.id]?.let { apiAtom ->
+                                if (localAtom.time > apiAtom.time) {
+                                    unitRepository.getUnitById(localAtom.id)
+                                        ?.let { tempListOut.add(it) }
+                                } else {
+                                    getUnitByIdFromApi(apiAtom.id).let {
+                                        if(it is ApiResponse.Success) tempListIn.add(it.data)
+                                    }
+                                }
+                            }
+                        }
+                        unitApiRepository.syncUnits(tempListOut)
+                        unitRepository.insertAllUnits(tempListIn)
+                    }
                 }
 
                 // Синхронизируем задачи
                 val itemsResponse = getAllItemsFromApi()
                 if (itemsResponse is ApiResponse.Success) {
-                    mainItemRepository.clearAllItems()
-                    mainItemRepository.insertAllItems(itemsResponse.data)
+                    if (localSync.users.isEmpty()) {
+                        mainItemRepository.clearAllItems()
+                        mainItemRepository.insertAllItems(itemsResponse.data)
+                    } else {
+                        val tempListIn = arrayListOf<MainItemData>()
+                        val tempListOut = arrayListOf<MainItemData>()
+                        val mapApiSyncItemsById: Map<String, SyncAtom> =
+                            syncData.items.associateBy { it.id }
+                        localSync.items.forEach { localAtom ->
+                            mapApiSyncItemsById[localAtom.id]?.let { apiAtom ->
+                                if (localAtom.time > apiAtom.time) {
+                                    mainItemRepository.getItemById(localAtom.id)
+                                        ?.let { tempListOut.add(it) }
+                                } else {
+                                    getItemByIdFromApi(apiAtom.id).let {
+                                        if (it is ApiResponse.Success){
+                                            tempListIn.add(it.data)
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        itemApiRepository.syncItems(tempListOut)
+                        mainItemRepository.insertAllItems(tempListIn)
+                    }
                 }
 
                 true

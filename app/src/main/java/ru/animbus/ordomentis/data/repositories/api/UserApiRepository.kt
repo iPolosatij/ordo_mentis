@@ -4,16 +4,15 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import ru.animbus.ordomentis.data.webapi.clients.UserApiClient
 import ru.animbus.ordomentis.data.webapi.models.ApiResponse
-import ru.animbus.ordomentis.data.webapi.models.SyncDataResponse
-import ru.animbus.ordomentis.data.webapi.models.SyncRequest
+import ru.animbus.ordomentis.data.webapi.models.SyncData
 import ru.animbus.ordomentis.domain.models.UserData
 
 class UserApiRepository(
     private val userApiClient: UserApiClient
 ) {
-    suspend fun getSyncData(userId: String, lastSyncTime: Long = 0): ApiResponse<SyncDataResponse> {
+    suspend fun getSyncData(userId: String, lastSyncTime: Long = 0): ApiResponse<SyncData> {
         return withContext(Dispatchers.IO) {
-            userApiClient.getSyncData(SyncRequest(userId, lastSyncTime))
+            userApiClient.getSyncData(userId)
         }
     }
 

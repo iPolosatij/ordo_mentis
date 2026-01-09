@@ -7,13 +7,12 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
-import ru.animbus.ordomentis.data.webapi.models.SyncDataResponse
-import ru.animbus.ordomentis.data.webapi.models.SyncRequest
+import ru.animbus.ordomentis.data.webapi.models.SyncData
 import ru.animbus.ordomentis.domain.models.UserData
 
 interface UserApi {
-    @GET("users/sync")
-    suspend fun getSyncData(@Body request: SyncRequest): Response<SyncDataResponse>
+    @GET("users/sync/{id}")
+    suspend fun getSyncData(@Path("id") id: String): Response<SyncData>
 
     @GET("users")
     suspend fun getAllUsers(): Response<List<UserData>>

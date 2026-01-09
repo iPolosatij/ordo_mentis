@@ -5,10 +5,12 @@ import org.koin.android.ext.koin.androidContext
 import org.koin.dsl.module
 import ru.animbus.ordomentis.data.database.AppDatabase
 import ru.animbus.ordomentis.data.database.mappers.MainItemMapper
+import ru.animbus.ordomentis.data.database.mappers.SyncDataMapper
 import ru.animbus.ordomentis.data.database.mappers.UnitMapper
 import ru.animbus.ordomentis.data.database.mappers.UserMapper
 import ru.animbus.ordomentis.data.repositories.AppRepository
 import ru.animbus.ordomentis.data.repositories.MainItemRepository
+import ru.animbus.ordomentis.data.repositories.SyncRepository
 import ru.animbus.ordomentis.data.repositories.UnitRepository
 import ru.animbus.ordomentis.data.repositories.UserRepository
 
@@ -26,17 +28,20 @@ val databaseModule = module {
     single { get<AppDatabase>().unitDao() }
     single { get<AppDatabase>().userDao() }
     single { get<AppDatabase>().mainItemDao() }
+    single { get<AppDatabase>().syncDataDao() }
 
     // Mappers
     single { UnitMapper() }
     single { UserMapper() }
     single { MainItemMapper() }
+    single { SyncDataMapper() }
 
     // Repositories
     single { UnitRepository(get(), get()) }
     single { UserRepository(get(), get()) }
     single { MainItemRepository(get(), get()) }
+    single { SyncRepository(get(), get()) }
 
     // Main repository
-    single { AppRepository(get(), get(), get(), get(), get(), get()) }
+    single { AppRepository(get(), get(), get(), get(), get(), get(), get()) }
 }

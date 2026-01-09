@@ -21,6 +21,9 @@ class MainViewModel(
     private val _isProfileMenuExpanded = MutableStateFlow(false)
     val isProfileMenuExpanded: StateFlow<Boolean> = _isProfileMenuExpanded
 
+    private val _syncState = MutableStateFlow(SyncState.IDLE)
+    val syncState: StateFlow<SyncState> = _syncState
+
     init {
         loadCurrentUser()
     }
@@ -42,6 +45,38 @@ class MainViewModel(
 
     fun closeProfileMenu() {
         _isProfileMenuExpanded.value = false
+    }
+
+    fun performSync() {
+        if (_syncState.value == SyncState.SYNCING) return
+
+        viewModelScope.launch {
+            _syncState.value = SyncState.SYNCING
+            val userId = _currentUser.value?.userId ?: "demo_user"
+
+            try {
+                val success = appRepository.performFullSync(userId)
+                _syncState.value = if (success) SyncState.SUCCESS else SyncState.ERROR
+
+                // Автоматически сбрасываем статус через 3 секунды
+                viewModelScope.launch {
+                    kotlinx.coroutines.delay(3000)
+                    if (_syncState.value != SyncState.SYNCING) {
+                        _syncState.value = SyncState.IDLE
+                    }
+                }
+            } catch (e: Exception) {
+                _syncState.value = SyncState.ERROR
+
+                // Автоматически сбрасываем статус через 3 секунды
+                viewModelScope.launch {
+                    kotlinx.coroutines.delay(3000)
+                    if (_syncState.value != SyncState.SYNCING) {
+                        _syncState.value = SyncState.IDLE
+                    }
+                }
+            }
+        }
     }
 
     fun onLoginClick() {
@@ -76,4 +111,11 @@ class MainViewModel(
 
 enum class MainSection {
     ITEMS, UNITS, USERS
+}
+
+enum class SyncState {
+    IDLE,        // Неактивна, белый цвет
+    SYNCING,     // В процессе синхронизации, анимация
+    SUCCESS,     // Успешно, зеленый цвет
+    ERROR        // Ошибка, красный цвет
 }

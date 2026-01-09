@@ -112,14 +112,3 @@ data class Money(
     val type: MoneyType,
 )
 enum class MoneyType(type: String){ Rub("RUB"), Usd("USD"), Cny("CNY"), Gbp("GBP")}
-
-data class SyncData(
-    val users: List<SyncAtom>,
-    val items: List<SyncAtom>,
-    val units: List<SyncAtom>,
-)
-
-data class SyncAtom(
-    val id: String,
-    val time: Long,
-)

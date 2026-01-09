@@ -3,6 +3,7 @@ package ru.animbus.ordomentis.data.database.converters
 import androidx.room.TypeConverter
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import ru.animbus.ordomentis.data.webapi.models.SyncAtom
 import ru.animbus.ordomentis.domain.models.ContactDataType
 import ru.animbus.ordomentis.domain.models.ContactsData
 import ru.animbus.ordomentis.domain.models.ItemComment
@@ -111,4 +112,11 @@ class Converters {
     @TypeConverter
     fun toMainItemDataList(json: String?): List<ru.animbus.ordomentis.domain.models.MainItemData> =
         json?.let { gson.fromJson(it, object : TypeToken<List<ru.animbus.ordomentis.domain.models.MainItemData>>() {}.type) } ?: emptyList()
+
+    @TypeConverter
+    fun fromSyncAtomList(list: List<SyncAtom>): String = gson.toJson(list)
+    @TypeConverter
+    fun toSyncAtomList(json: String?): List<SyncAtom> =
+        json?.let { gson.fromJson(it, object : TypeToken<List<SyncAtom>>() {}.type) } ?: emptyList()
+
 }
