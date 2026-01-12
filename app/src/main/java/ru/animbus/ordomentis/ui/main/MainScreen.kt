@@ -1,18 +1,13 @@
 package ru.animbus.ordomentis.ui.main
 
-import androidx.compose.foundation.layout.Box
+import SyncButton
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.CheckCircle
-import androidx.compose.material.icons.filled.Error
-import androidx.compose.material.icons.filled.Sync
 import androidx.compose.material.icons.outlined.Home
 import androidx.compose.material.icons.outlined.Menu
 import androidx.compose.material.icons.outlined.Person
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -28,9 +23,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import org.koin.androidx.compose.koinViewModel
 import ru.animbus.ordomentis.ui.items.ItemsTab
 import ru.animbus.ordomentis.ui.units.UnitsTab
@@ -149,70 +142,6 @@ fun MainScreen(
             MainSection.ITEMS -> ItemsTab(modifier.padding(innerPadding))
             MainSection.UNITS -> UnitsTab(modifier.padding(innerPadding))
             MainSection.USERS -> UsersTab(modifier.padding(innerPadding))
-        }
-    }
-}
-
-@Composable
-fun SyncButton(
-    syncState: SyncState,
-    onSyncClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier.size(48.dp),
-        contentAlignment = Alignment.Center
-    ) {
-        when (syncState) {
-            SyncState.IDLE -> {
-                IconButton(
-                    onClick = onSyncClick,
-                    modifier = Modifier.size(48.dp)
-                ) {
-                    Icon(
-                        // Используем иконку синхронизации из расширенного набора
-                        imageVector = Icons.Filled.Sync,
-                        contentDescription = "Синхронизировать",
-                        tint = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-                }
-            }
-
-            SyncState.SYNCING -> {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(24.dp),
-                    strokeWidth = 2.dp,
-                    color = MaterialTheme.colorScheme.primary
-                )
-            }
-
-            SyncState.SUCCESS -> {
-                IconButton(
-                    onClick = onSyncClick,
-                    modifier = Modifier.size(48.dp),
-                    enabled = true
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.CheckCircle,
-                        contentDescription = "Синхронизация успешна",
-                        tint = MaterialTheme.colorScheme.tertiary
-                    )
-                }
-            }
-
-            SyncState.ERROR -> {
-                IconButton(
-                    onClick = onSyncClick,
-                    modifier = Modifier.size(48.dp),
-                    enabled = true
-                ) {
-                    Icon(
-                        imageVector = Icons.Filled.Error,
-                        contentDescription = "Ошибка синхронизации",
-                        tint = MaterialTheme.colorScheme.error
-                    )
-                }
-            }
         }
     }
 }
